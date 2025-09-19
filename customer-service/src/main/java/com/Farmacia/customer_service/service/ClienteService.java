@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -88,16 +87,14 @@ public class ClienteService implements IClienteService {
         return receta.obtenerRecetasPorCliente(clienteId);
     }
 
-    // Fallback CORRECTO para ventas
     private List<ClienteVentaDTO> fallbackObtenerVentas(Integer clienteId, Throwable throwable) {
         log.warn("Fallback para ventas del cliente: {}, Error: {}", clienteId, throwable.getMessage());
-        return Collections.emptyList(); // Retorna lista vacía, no Optional
+        return Collections.emptyList();
     }
 
-    // Fallback CORRECTO para recetas
     private List<ClienteRecetasDTO> fallbackObtenerRecetas(Integer clienteId, Throwable throwable) {
         log.warn("Fallback para recetas del cliente: {}, Error: {}", clienteId, throwable.getMessage());
-        return Collections.emptyList(); // Retorna lista vacía, no Optional
+        return Collections.emptyList();
     }
 
 
