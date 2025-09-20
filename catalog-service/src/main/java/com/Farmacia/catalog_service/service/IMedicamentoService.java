@@ -21,4 +21,6 @@ public interface IMedicamentoService {
     List<MedicamentosGetDTO> findByName(String nombre);
 
     MedicamentosGetDTO update(Integer id, MedicamentoUpdateDTO put);
+
+    List<MedicamentosGetDTO> proveedorId(Integer proveedorId);
 }

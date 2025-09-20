@@ -92,5 +92,17 @@ public class MedicamentoController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @GetMapping("/proveedor/{proveedorId}")
+    public ResponseEntity<?> obtenerMedicamentosPorProveedor(@PathVariable Integer proveedorId){
+        try{
+            List<MedicamentosGetDTO> medicamentos = medicamentoService.proveedorId(proveedorId);
+            if (medicamentos != null && !medicamentos.isEmpty()) {
+                return new ResponseEntity<>(medicamentos, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("No se encontraron coincidencia", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

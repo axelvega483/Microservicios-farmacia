@@ -1,4 +1,4 @@
-package com.Farmacia.catalog_service.DTO;
+package com.Farmacia.provider_service.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,4 +13,5 @@ public class ProveedorGetDTO {
     private String telefono;
     private String email;
     private Boolean activo;
+    private List<MedicamentosGetDTO> medicamentos;
 }

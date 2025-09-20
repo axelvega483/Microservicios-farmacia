@@ -1,16 +1,17 @@
-package com.Farmacia.catalog_service.DTO;
+package com.Farmacia.provider_service.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class ProveedorGetDTO {
-    private Integer id;
+public class ProveedorUpdateDTO {
+
     private String nombre;
+
     private String telefono;
+
     private String email;
+
     private Boolean activo;
 }

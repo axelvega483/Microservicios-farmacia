@@ -1,9 +1,6 @@
 package com.Farmacia.catalog_service.service;
 
-import com.Farmacia.catalog_service.DTO.MedicamentoMapper;
-import com.Farmacia.catalog_service.DTO.MedicamentoPostDTO;
-import com.Farmacia.catalog_service.DTO.MedicamentoUpdateDTO;
-import com.Farmacia.catalog_service.DTO.MedicamentosGetDTO;
+import com.Farmacia.catalog_service.DTO.*;
 import com.Farmacia.catalog_service.model.Medicamento;
 import com.Farmacia.catalog_service.repository.MedicamentoRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -58,7 +55,8 @@ public class MedicamentoService implements IMedicamentoService {
         Optional<Medicamento> medicamento = repo.findById(id).filter(Medicamento::getActivo);
         if (medicamento.isPresent()) {
             MedicamentosGetDTO dto = mapper.toDTO(medicamento.get());
-            dto.setProveedor(proveedor.obtenerProveedorPorId(dto.getProveedor().getId()));
+            ProveedorGetDTO prov = proveedor.obtenerProveedorBasico(medicamento.get().getProveedorId());
+            dto.setProveedor(prov);
             return Optional.of(dto);
         }
         return Optional.empty();
@@ -82,7 +80,8 @@ public class MedicamentoService implements IMedicamentoService {
         List<MedicamentosGetDTO> dtos = new ArrayList<>();
         for (Medicamento medicamento : medicamentos) {
             MedicamentosGetDTO dto = mapper.toDTO(medicamento);
-            dto.setProveedor(proveedor.obtenerProveedorPorId(dto.getProveedor().getId()));
+            ProveedorGetDTO prov = proveedor.obtenerProveedorBasico(medicamento.getProveedorId());
+            dto.setProveedor(prov);
             dtos.add(dto);
         }
         return dtos;
@@ -117,5 +116,16 @@ public class MedicamentoService implements IMedicamentoService {
         medicamento = mapper.update(medicamento, put);
         Medicamento saved = repo.save(medicamento);
         return mapper.toDTO(saved);
+    }
+
+    @Override
+    public List<MedicamentosGetDTO> proveedorId(Integer proveedorId) {
+        List<Medicamento> medicamentos = repo.findByProveedor(proveedorId);
+        List<MedicamentosGetDTO> dtos = new ArrayList<>();
+        for (Medicamento medicamento : medicamentos) {
+            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 }

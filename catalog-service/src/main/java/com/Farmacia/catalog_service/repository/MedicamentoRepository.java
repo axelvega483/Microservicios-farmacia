@@ -13,6 +13,9 @@ public interface MedicamentoRepository extends JpaRepository<Medicamento, Intege
     @Query("SELECT m FROM Medicamento m WHERE m.nombre =:nombre AND m.proveedorId =:proveedorId AND m.activo = TRUE ")
     Optional<Medicamento> findByNombreAndProveedor(String nombre, Integer proveedorId);
 
+    @Query("SELECT m FROM Medicamento m WHERE m.proveedorId =:proveedorId AND m.activo = TRUE ")
+    List<Medicamento> findByProveedor(Integer proveedorId);
+
     @Query("SELECT m FROM Medicamento m WHERE m.activo = TRUE AND m.nombre LIKE %:nombre%")
     List<Medicamento> findByNombre(String nombre);
 }
