@@ -128,4 +128,15 @@ public class MedicamentoService implements IMedicamentoService {
         }
         return dtos;
     }
+
+    @Override
+    public List<MedicamentosGetDTO> recetaId(Integer recetaId) {
+        List<Medicamento> medicamentos = repo.findByProveedor(recetaId);
+        List<MedicamentosGetDTO> dtos = new ArrayList<>();
+        for (Medicamento medicamento : medicamentos) {
+            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 }

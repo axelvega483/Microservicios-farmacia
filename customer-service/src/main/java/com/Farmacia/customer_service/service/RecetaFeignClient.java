@@ -9,6 +9,6 @@ import java.util.List;
 
 @FeignClient(name = "prescriptions-service")
 public interface RecetaFeignClient {
-    @GetMapping("/prescriptions/cliente/{clienteId}")
-    List<ClienteRecetasDTO> obtenerRecetasPorCliente(@PathVariable Integer clienteId);
+    @GetMapping("/receta/cliente/{id}")
+    List<ClienteRecetasDTO> findByCliente(@PathVariable Integer id);
 }

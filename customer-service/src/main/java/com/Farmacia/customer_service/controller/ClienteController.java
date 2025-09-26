@@ -81,4 +81,17 @@ public class ClienteController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/nombre/{id}")
+    public ResponseEntity<?> findName(@PathVariable Integer id) {
+        try {
+            ClientesGetDTO cliente = clienteService.findName(id).orElse(null);
+            if (cliente != null) {
+                return new ResponseEntity<>(cliente, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Cliente no encontrado", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

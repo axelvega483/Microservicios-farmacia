@@ -105,4 +105,17 @@ public class MedicamentoController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/receta/{recetaId}")
+    public ResponseEntity<?> obtenerMedicamentosPorReceta(@PathVariable Integer recetaId){
+        try{
+            List<MedicamentosGetDTO> medicamentos = medicamentoService.recetaId(recetaId);
+            if (medicamentos != null && !medicamentos.isEmpty()) {
+                return new ResponseEntity<>(medicamentos, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("No se encontraron coincidencia", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

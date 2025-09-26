@@ -83,8 +83,8 @@ public class ClienteService implements IClienteService {
 
     @CircuitBreaker(name = "prescriptions-service", fallbackMethod = "fallbackObtenerRecetas")
     @Retry(name = "prescriptions-service")
-    private List<ClienteRecetasDTO> obtenerRecetasConResiliencia(Integer clienteId) {
-        return receta.obtenerRecetasPorCliente(clienteId);
+    private List<ClienteRecetasDTO> obtenerRecetasConResiliencia(Integer id) {
+        return receta.findByCliente(id);
     }
 
     private List<ClienteVentaDTO> fallbackObtenerVentas(Integer clienteId, Throwable throwable) {
@@ -127,7 +127,19 @@ public class ClienteService implements IClienteService {
     }
 
     @Override
+    public Optional<ClientesGetDTO> findName(Integer id) {
+        Optional<Cliente> cliente = repo.findById(id).filter(Cliente::getActivo);
+        if (cliente.isPresent()) {
+            ClientesGetDTO dto = mapper.toDTO(cliente.get());
+            return Optional.of(dto);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public boolean findDniActivo(String dni) {
         return repo.findByDniAndActivo(dni).isPresent();
     }
+
+
 }

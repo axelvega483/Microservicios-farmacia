@@ -23,4 +23,5 @@ public interface IMedicamentoService {
     MedicamentosGetDTO update(Integer id, MedicamentoUpdateDTO put);
 
     List<MedicamentosGetDTO> proveedorId(Integer proveedorId);
+    List<MedicamentosGetDTO> recetaId(Integer recetaId);
 }

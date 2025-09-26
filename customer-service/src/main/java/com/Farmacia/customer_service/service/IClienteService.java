@@ -19,4 +19,6 @@ public interface IClienteService {
     Optional<ClientesGetDTO> findById(Integer id);
 
     List<ClientesGetDTO> findAll();
+
+    Optional<ClientesGetDTO> findName(Integer id);
 }
