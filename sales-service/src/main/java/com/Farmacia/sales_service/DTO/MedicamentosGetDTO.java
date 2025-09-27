@@ -1,4 +1,4 @@
-package com.Farmacia.provider_service.DTO;
+package com.Farmacia.sales_service.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
