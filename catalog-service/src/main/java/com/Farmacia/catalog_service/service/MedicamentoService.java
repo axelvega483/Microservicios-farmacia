@@ -9,6 +9,7 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,5 +139,26 @@ public class MedicamentoService implements IMedicamentoService {
             dtos.add(dto);
         }
         return dtos;
+    }
+
+    @Override
+    public Optional<MedicamentosGetDTO> obtenerMedicamentosPorId(Integer medicamentoId) {
+        Optional<Medicamento> medicamento = repo.findById(medicamentoId).filter(Medicamento::getActivo);
+        if (medicamento.isPresent()) {
+            MedicamentosGetDTO dto = mapper.toDTO(medicamento.get());
+            return Optional.of(dto);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public void actualizarStock(Integer id, Integer nuevoStock) {
+        Medicamento medicamento = repo.findById(id)
+                .filter(Medicamento::getActivo)
+                .orElseThrow(() -> new RuntimeException("Medicamento no encontrado con ID: " + id));
+
+        medicamento.setStock(nuevoStock);
+        repo.save(medicamento);
     }
 }

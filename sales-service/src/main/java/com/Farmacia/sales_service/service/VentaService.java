@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,7 +39,7 @@ public class VentaService implements IVentaService {
     @Override
     public VentaGetDTO create(VentaPostDTO post) {
         ClientesGetDTO cliente = obtenerCliente(post.getClienteId());
-        UserGetDTO usuario = obtenerUsuario(post.getEmpleadoId());
+        UserGetDTO usuario = obtenerUsuario(post.getUserId());
 
         List<DetalleVenta> detalles = new ArrayList<>();
 
@@ -78,8 +79,8 @@ public class VentaService implements IVentaService {
 
     @CircuitBreaker(name = "user-service", fallbackMethod = "fallbackObtenerUsuario")
     @Retry(name = "user-service")
-    private UserGetDTO obtenerUsuario(Integer usuarioId) {
-        UserGetDTO usuario = userService.obtenerId(usuarioId);
+    private UserGetDTO obtenerUsuario(Integer userId) {
+        UserGetDTO usuario = userService.obtenerId(userId);
         if (usuario == null) {
             throw new RuntimeException("Usuario no encontrado");
         }
@@ -157,7 +158,7 @@ public class VentaService implements IVentaService {
         if (venta.isPresent()) {
             VentaGetDTO dto = mapper.toDTO(venta.get());
             ClientesGetDTO cliente = obtenerCliente(venta.get().getClienteId());
-            UserGetDTO user = obtenerUsuario(venta.get().getEmpleadoId());
+            UserGetDTO user = obtenerUsuario(venta.get().getUserId());
             dto.setCliente(cliente.getNombre());
             dto.setEmpleado(user.getNombre());
             return Optional.of(dto);
@@ -173,11 +174,26 @@ public class VentaService implements IVentaService {
         for (Venta venta : ventas) {
             VentaGetDTO dto = mapper.toDTO(venta);
             ClientesGetDTO cliente = obtenerCliente(venta.getClienteId());
-            UserGetDTO user = obtenerUsuario(venta.getEmpleadoId());
+            UserGetDTO user = obtenerUsuario(venta.getUserId());
             dto.setCliente(cliente.getNombre());
             dto.setEmpleado(user.getNombre());
             dtos.add(dto);
         }
         return dtos;
+    }
+
+    @Override
+    public List<VentaGetDTO> obtenerVentasPorUsuario(Integer userId) {
+        List<Venta> ventas =repo.findByUserIdAndActivoTrue(userId);
+        return ventas.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<VentaGetDTO> obtenerVentasPorCliente(Integer clienteId) {
+        List<Venta> ventas =repo.findByClienteIdAndActivoTrue(clienteId);
+        return ventas.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

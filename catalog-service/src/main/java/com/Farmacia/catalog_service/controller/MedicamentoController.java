@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -49,7 +50,7 @@ public class MedicamentoController {
         try {
             MedicamentosGetDTO medicamento = medicamentoService.findById(id).orElse(null);
             if (medicamento != null) {
-                return new ResponseEntity<>( medicamento, HttpStatus.OK);
+                return new ResponseEntity<>(medicamento, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Medicamento inexistente", HttpStatus.NOT_FOUND);
             }
@@ -62,7 +63,7 @@ public class MedicamentoController {
     public ResponseEntity<?> create(@Valid @RequestBody MedicamentoPostDTO medicamentoDTO) {
         try {
             MedicamentosGetDTO dto = medicamentoService.create(medicamentoDTO);
-            return new ResponseEntity<>( dto, HttpStatus.CREATED);
+            return new ResponseEntity<>(dto, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -72,7 +73,7 @@ public class MedicamentoController {
     public ResponseEntity<?> update(@Valid @RequestBody MedicamentoUpdateDTO medicamentoDTO, @PathVariable Integer id) {
         try {
             MedicamentosGetDTO dto = medicamentoService.update(id, medicamentoDTO);
-            return new ResponseEntity<>( dto, HttpStatus.OK);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -92,9 +93,10 @@ public class MedicamentoController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/proveedor/{proveedorId}")
-    public ResponseEntity<?> obtenerMedicamentosPorProveedor(@PathVariable Integer proveedorId){
-        try{
+    public ResponseEntity<?> obtenerMedicamentosPorProveedor(@PathVariable Integer proveedorId) {
+        try {
             List<MedicamentosGetDTO> medicamentos = medicamentoService.proveedorId(proveedorId);
             if (medicamentos != null && !medicamentos.isEmpty()) {
                 return new ResponseEntity<>(medicamentos, HttpStatus.OK);
@@ -105,9 +107,10 @@ public class MedicamentoController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/receta/{recetaId}")
-    public ResponseEntity<?> obtenerMedicamentosPorReceta(@PathVariable Integer recetaId){
-        try{
+    public ResponseEntity<?> obtenerMedicamentosPorReceta(@PathVariable Integer recetaId) {
+        try {
             List<MedicamentosGetDTO> medicamentos = medicamentoService.recetaId(recetaId);
             if (medicamentos != null && !medicamentos.isEmpty()) {
                 return new ResponseEntity<>(medicamentos, HttpStatus.OK);
@@ -118,4 +121,30 @@ public class MedicamentoController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/obtener/{medicamentoId}")
+    public ResponseEntity<?> obtenerMedicamentosPorId(@PathVariable Integer medicamentoId) {
+        try {
+            Optional<MedicamentosGetDTO> medicamentos = medicamentoService.obtenerMedicamentosPorId(medicamentoId);
+            if (medicamentos != null) {
+                return new ResponseEntity<>(medicamentos, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("No se encontraron coincidencia", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PutMapping("/stock/{id}")
+    public ResponseEntity<?> actualizarStock(@PathVariable Integer id, @RequestParam Integer cantidad) {
+        try {
+            medicamentoService.actualizarStock(id, cantidad);
+            return new ResponseEntity<>("NStock actualizado", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

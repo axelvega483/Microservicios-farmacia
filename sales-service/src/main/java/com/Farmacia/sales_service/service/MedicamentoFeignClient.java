@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 
 @FeignClient(name = "catalog-service")
 public interface MedicamentoFeignClient {
     @GetMapping("/medicamento/obtener/{medicamentoId}")
     MedicamentosGetDTO obtenerMedicamentosPorId(@PathVariable Integer medicamentoId);
 
-    @PutMapping("/{id}/stock")
+    @PutMapping("/medicamento/stock/{id}")
     void actualizarStock(@PathVariable Integer id, @RequestParam Integer cantidad);
 }
 

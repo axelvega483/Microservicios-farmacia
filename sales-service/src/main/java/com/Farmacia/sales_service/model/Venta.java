@@ -51,7 +51,7 @@ public class Venta implements Serializable {
 
 
     @NotNull(message = "La venta debe estar registrada por un empleado")
-    private Integer empleadoId;
+    private Integer userId;
 
     @Column(nullable = false)
     private Boolean activo = true;

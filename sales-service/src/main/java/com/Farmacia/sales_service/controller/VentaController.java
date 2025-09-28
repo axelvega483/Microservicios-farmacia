@@ -102,4 +102,23 @@ public class VentaController {
             return new ResponseEntity<>("Error al generar factura: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> obtenerVentasPorUsuario(@PathVariable Integer userId) {
+        try {
+            List<VentaGetDTO> dto = ventasService.obtenerVentasPorUsuario(userId);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<?> obtenerVentasPorCliente(@PathVariable Integer clienteId) {
+        try {
+            List<VentaGetDTO> dto = ventasService.obtenerVentasPorCliente(clienteId);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

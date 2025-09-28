@@ -121,4 +121,9 @@ public class UserService implements IUserServicie {
     public Optional<User> findByCorreoAndPassword(String email, String password) {
         return repo.findByCorreoAndPassword(email, password);
     }
+    @Override
+    public UserGetDTO obtenerId(Integer userId) {
+        Optional<User> optUser = repo.findById(userId).filter(User::getActivo);
+        return optUser.map(mapper::toDTO).orElse(null);
+    }
 }

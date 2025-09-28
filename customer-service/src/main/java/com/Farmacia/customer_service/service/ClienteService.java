@@ -127,19 +127,16 @@ public class ClienteService implements IClienteService {
     }
 
     @Override
-    public Optional<ClientesGetDTO> findName(Integer id) {
+    public ClientesGetDTO findName(Integer id) {
         Optional<Cliente> cliente = repo.findById(id).filter(Cliente::getActivo);
         if (cliente.isPresent()) {
-            ClientesGetDTO dto = mapper.toDTO(cliente.get());
-            return Optional.of(dto);
+            return mapper.toDTO(cliente.get());
         }
-        return Optional.empty();
+        return null;
     }
 
     @Override
     public boolean findDniActivo(String dni) {
         return repo.findByDniAndActivo(dni).isPresent();
     }
-
-
 }

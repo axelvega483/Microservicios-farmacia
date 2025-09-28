@@ -9,6 +9,6 @@ import java.util.List;
 
 @FeignClient(name = "sales-service")
 public interface VentaFeignClient {
-    @GetMapping("/sales/cliente/{clienteId}")
+    @GetMapping("/venta/cliente/{clienteId}")
     List<ClienteVentaDTO> obtenerVentasPorCliente(@PathVariable Integer clienteId);
 }

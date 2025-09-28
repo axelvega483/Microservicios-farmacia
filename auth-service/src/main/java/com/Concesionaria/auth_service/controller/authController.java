@@ -102,4 +102,19 @@ public class authController {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/obtener/{userId}")
+    public ResponseEntity<?> obtenerId(@PathVariable Integer userId) {
+        try {
+            UserGetDTO usuario = userService.obtenerId(userId);
+            if (usuario != null) {
+                return new ResponseEntity<>(usuario, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

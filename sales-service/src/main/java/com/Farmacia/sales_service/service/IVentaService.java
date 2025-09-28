@@ -13,6 +13,9 @@ public interface IVentaService {
 
     Optional<VentaGetDTO> findById(Integer id);
 
-
     List<VentaGetDTO> findAll();
+
+    List<VentaGetDTO> obtenerVentasPorUsuario(Integer userId);
+
+    List<VentaGetDTO> obtenerVentasPorCliente(Integer clienteId);
 }

@@ -20,5 +20,5 @@ public class VentaPostDTO {
     @NotNull
     private Integer clienteId;
     @NotNull
-    private Integer empleadoId;
+    private Integer userId;
 }

@@ -9,7 +9,6 @@ import com.Farmacia.provider_service.repository.ProveedorRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.persistence.EntityExistsException;
-import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class ProveedorService implements IProveedorService {
     @Autowired
     private ProveedorMapper mapper;
     @Autowired
-    private MedicamentoFeingClient medicamento;
+    private MedicamentoFeignClient medicamento;
 
     @Override
     public ProveedorGetDTO create(ProveedorPostDTO post) {

@@ -84,7 +84,7 @@ public class ClienteController {
     @GetMapping("/nombre/{id}")
     public ResponseEntity<?> findName(@PathVariable Integer id) {
         try {
-            ClientesGetDTO cliente = clienteService.findName(id).orElse(null);
+            ClientesGetDTO cliente = clienteService.findName(id);
             if (cliente != null) {
                 return new ResponseEntity<>(cliente, HttpStatus.OK);
             } else {

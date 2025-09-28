@@ -4,6 +4,8 @@ import com.Concesionaria.auth_service.DTO.UserGetDTO;
 import com.Concesionaria.auth_service.DTO.UserPostDTO;
 import com.Concesionaria.auth_service.DTO.UserPutDTO;
 import com.Concesionaria.auth_service.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +26,6 @@ public interface IUserServicie {
     Boolean existe(String dni);
 
     Optional<User> findByCorreoAndPassword(String email, String password);
+
+    UserGetDTO obtenerId(Integer userId);
 }

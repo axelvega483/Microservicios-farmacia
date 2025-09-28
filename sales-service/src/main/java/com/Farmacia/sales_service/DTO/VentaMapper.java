@@ -30,7 +30,7 @@ public class VentaMapper {
     public Venta toEntity(VentaPostDTO post, List<DetalleVenta> detalles) {
         Venta venta = new Venta();
         venta.setClienteId(post.getClienteId());
-        venta.setEmpleadoId(post.getEmpleadoId());
+        venta.setUserId(post.getUserId());
         venta.setFecha(post.getFecha());
         venta.setDetalleventas(detalles);
         venta.setTotal(calcularTotal(detalles));
