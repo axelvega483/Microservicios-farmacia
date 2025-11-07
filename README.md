@@ -1,85 +1,106 @@
-# 💊 Sistema de Gestión para Farmacia (Microservicios)
+<h1 align="center">
+  💊 Sistema de Gestión para Farmacia (Microservicios)
+</h1>
 
-Sistema de backend distribuido para la administración integral de una farmacia.  
-Permite gestionar empleados, clientes, medicamentos, ventas, proveedores y recetas médicas mediante una arquitectura de **microservicios**, optimizando y automatizando los procesos operativos con una API REST robusta, extensible y escalable.
+<p align="center">
+  <b>Sistema backend distribuido para administración integral de una farmacia</b>
+  <br>
+  <em>Desarrollado con Spring Boot • MySQL/PostgreSQL • OpenAPI 3</em>
+</p>
+
+<p align="center">
+  <a href="http://localhost:8080/swagger-ui/index.html">
+    <img src="https://img.shields.io/badge/Documentación-SwaggerUI-brightgreen?style=for-the-badge&logo=swagger" alt="Swagger UI">
+  </a>
+  <a href="http://localhost:8080/v3/api-docs">
+    <img src="https://img.shields.io/badge/API-OpenAPI3-orange?style=for-the-badge&logo=openapi-initiative" alt="OpenAPI 3">
+  </a>
+  <img src="https://img.shields.io/badge/Java-17-blue?style=for-the-badge&logo=openjdk" alt="Java 17">
+  <img src="https://img.shields.io/badge/Spring_Boot-3.4.5-brightgreen?style=for-the-badge&logo=springboot" alt="Spring Boot">
+</p>
 
 ---
 
 ## 🌟 Características del Sistema
-- Autogeneración de usuario administrador al iniciar el sistema.  
-- Gestión completa de ventas con actualización automática del stock de medicamentos.  
-- Anulación de ventas con restauración del inventario.  
-- Relación entre entidades distribuidas en microservicios (ej. `Cliente` ↔ `Receta`, `Venta` ↔ `DetalleVenta`).  
-- Generación automática de facturas de compra.  
-- Uso de **DTOs** para la comunicación entre microservicios y hacia el frontend.  
-- Modularidad y separación de responsabilidades mediante microservicios independientes.  
+
+<div align="center">
+
+| Característica | Icono | Descripción |
+|----------------|-------|-------------|
+| **Usuario Admin Automático** | 👤 | Se crea al iniciar el sistema si no hay registros |
+| **Gestión de Ventas** | 💰 | Actualiza stock automáticamente y genera factura |
+| **Anulación de Ventas** | 🔄 | Restaura inventario al cancelar una venta |
+| **Entidades Distribuidas** | 🔗 | Relaciones entre microservicios (`Cliente` ↔ `Receta`) |
+| **Facturación Automática** | 🧾 | Generación de comprobantes de compra |
+| **DTOs Personalizados** | 🎯 | Comunicación clara entre servicios y frontend |
+| **Arquitectura Modular** | 🧩 | Microservicios independientes y escalables |
+
+</div>
+
+---
+
+## 🧱 Microservicios y Funcionalidades
+
+<div align="center">
+
+| Servicio | Icono | Descripción | Endpoints |
+|----------|-------|-------------|-----------|
+| **auth-service** | 🔐 | Gestión de empleados y login | `GET/POST/PUT/DELETE /usuario` |
+| **customer-service** | 👥 | Clientes e historial de recetas/ventas | `GET/POST/PUT /cliente` |
+| **catalog-service** | 💊 | Medicamentos y stock | `GET/POST/PUT/DELETE /medicamento` |
+| **provider-service** | 🏭 | Proveedores asociados a medicamentos | `GET/POST/PUT/DELETE /proveedor` |
+| **sales-service** | 🧾 | Ventas, stock y facturación | `GET/POST /venta` |
+| **prescriptions-service** | 📋 | Recetas médicas por cliente | `GET/POST /receta` |
+| **gateway-service** | 🌐 | Ruteo hacia microservicios | `/api/**` |
+| **eureka-service** | 📡 | Descubrimiento de servicios | `Eureka Dashboard` |
+
+</div>
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
-- **Back-end (API REST)**  
-- Java 17  
-- Spring Boot  
-  - Spring Web  
-  - Spring Data JPA  
-  - Spring Security (opcional, para futuras integraciones con auth-service)  
-  - Spring Cloud Eureka Client  
-  - Spring Cloud Gateway  
-- Lombok  
-- MySQL / PostgreSQL (configurable)  
-- Maven  
 
----
+<div align="center">
 
-## 📝 Microservicios y Funcionalidades
+| Tecnología | Icono | Uso |
+|------------|-------|-----|
+| **Java 17** | <img src="https://img.shields.io/badge/Java-17-blue?style=flat&logo=openjdk" alt="Java 17"> | Lenguaje principal |
+| **Spring Boot** | <img src="https://img.shields.io/badge/Spring_Boot-3.4.5-brightgreen?style=flat&logo=springboot" alt="Spring Boot"> | Framework backend |
+| **Spring Data JPA** | <img src="https://img.shields.io/badge/JPA-Hibernate-59666C?style=flat&logo=hibernate" alt="Spring Data JPA"> | Persistencia ORM |
+| **Spring Cloud** | <img src="https://img.shields.io/badge/Spring_Cloud-Eureka/Gateway-6DB33F?style=flat&logo=spring"> | Eureka Client y Gateway |
+| **MySQL / PostgreSQL** | <img src="https://img.shields.io/badge/SQL-MySQL/PostgreSQL-4479A1?style=flat&logo=mysql" alt="SQL"> | Base de datos relacional |
+| **Lombok** | <img src="https://img.shields.io/badge/Lombok-Automático-FF9800?style=flat&logo=lombok" alt="Lombok"> | Reducción de boilerplate |
+| **Maven** | <img src="https://img.shields.io/badge/Maven-C71A36?style=flat&logo=apache-maven" alt="Maven"> | Gestión de dependencias |
 
-### **auth-service**
-- Gestión de empleados/usuarios (`ADMIN`, `EMPLEADO`).  
-- CRUD completo: alta, baja, edición y listado.  
-- Login y autenticación (preparado para JWT).  
-- Creación automática de un administrador si no existen registros.  
-
-### **customer-service**
-- Gestión completa de clientes.  
-- Consulta del historial de ventas y recetas médicas asociadas.  
-
-### **catalog-service**
-- Gestión de medicamentos.  
-- CRUD completo: alta, baja, edición y listado.  
-- Control de stock, disponibilidad y categoría.  
-- Asociación con proveedores (`proveedorId`).  
-
-### **provider-service**
-- Gestión de proveedores.  
-- CRUD completo: alta, baja, edición y listado.  
-- Asociación con medicamentos (`medicamentoId`).  
-
-### **sales-service**
-- Registro de ventas con detalle de cliente y medicamentos (referenciando `clienteId`, `medicamentoId`).  
-- Actualización automática de stock al registrar la venta.  
-- Anulación de ventas con devolución de stock.  
-- Cálculo automático de totales y generación de factura.  
-
-### **prescriptions-service**
-- Gestión de recetas médicas.  
-- Asociación de recetas a clientes (`clienteId`).  
-- Consulta detallada por cliente o de manera general.  
-
-### **gateway-service**
-- Puerta de entrada al ecosistema de microservicios desde clientes externos (frontend, Postman, etc.).  
-- Ruteo hacia los microservicios correspondientes.  
-
-### **eureka-service**
-- Registro y descubrimiento de microservicios (Service Discovery).  
-- Permite que todos los servicios se localicen dinámicamente y habilita balanceo de carga y resiliencia.  
+</div>
 
 ---
 
 ## ⚙️ Requerimientos No Funcionales
-- Validaciones en entidades con mensajes claros y personalizados.  
-- Modularidad y escalabilidad para futuras integraciones (web, mobile, auth-service).  
-- Arquitectura preparada para implementar JWT en el futuro.  
-- Código limpio y documentado siguiendo principios SOLID y buenas prácticas.  
-- Uso de **DTOs** para desacoplar datos internos de la exposición hacia otros servicios o frontend.  
+
+<div align="center">
+
+| Categoría | Especificación | Estado |
+|-----------|----------------|--------|
+| **🛡️ Validaciones** | Entidades con mensajes claros y personalizados | ✅ Implementado |
+| **📐 Modularidad** | Microservicios independientes y escalables | ✅ Implementado |
+| **🔒 Seguridad** | Preparado para JWT y roles | ✅ Implementado |
+| **📊 Performance** | Consultas optimizadas y control de stock | ✅ Implementado |
+| **🧼 Código Limpio** | Principios SOLID y buenas prácticas | ✅ Implementado |
+
+</div>
 
 ---
+
+<div align="center">
+
+## 🚀 ¿Listo para Probarlo?
+
+[**📖 Ir a la Documentación Interactiva**](http://localhost:8080/swagger-ui/index.html) • 
+
+**⭐ ¡Dale una estrella al repo si te resultó útil!**
+
+---
+*Desarrollado con ❤️ usando Spring Boot y Java 17*
+
+</div>
