@@ -1,0 +1,14 @@
+package com.Farmacia.auth_service.service;
+
+import com.Farmacia.auth_service.DTO.UserVentaDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+
+@FeignClient(name = "sales-service")
+public interface VentaFeignClient {
+    @GetMapping("/venta/user/{userId}")
+    List<UserVentaDTO> obtenerVentasPorUser(@PathVariable Integer userId);
+}
