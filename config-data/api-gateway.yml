@@ -3,15 +3,16 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              enabled: true
-              lower-case-service-id: true
-          httpclient:
-            connect-timeout: 5000
-            response-timeout: 10000
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 10000
+      default-filters:
+        - TokenRelay
+        - PreserveHostHeader
 
 server:
   port: 8080
@@ -27,3 +28,10 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.cloud.loadbalancer: DEBUG
+
+security:
+  jwt:
+    private:
+      key: ${PRIVATE_KEY}
+    user:
+      generation: ${USER_GENERATOR}

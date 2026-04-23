@@ -1,6 +1,6 @@
 package com.Farmacia.auth_service;
 
-import com.Farmacia.auth_service.DTO.UserGetDTO;
+import com.Farmacia.auth_service.DTO.User.UserGetDTO;
 import com.Farmacia.auth_service.model.User;
 import com.Farmacia.auth_service.service.IUserServicie;
 import com.Farmacia.auth_service.util.RolUser;
