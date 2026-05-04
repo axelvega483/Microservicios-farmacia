@@ -7,15 +7,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
@@ -54,7 +52,7 @@ public class Venta implements Serializable {
     private Integer userId;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private Boolean activo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

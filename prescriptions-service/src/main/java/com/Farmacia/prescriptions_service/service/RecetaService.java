@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +31,10 @@ public class RecetaService implements IRecetaService {
 
     @Override
     public RecetaMedicaGetDTO create(RecetaMedicaPostDTO post) {
-        if (post.getVigenteHasta().isBefore(LocalDate.now())) {
+        if (post.vigenteHasta().isBefore(LocalDate.now())) {
             throw new EntityNotFoundException("La fecha de vigencia no puede ser anterior a la fecha actual");
         }
-        if (post.getMedicamentoIds().size() > 15) {
+        if (post.medicamentoIds().size() > 15) {
             throw new IllegalArgumentException("Una receta no puede tener más de 15 medicamentos");
         }
         RecetaMedica receta = mapper.create(post);
@@ -48,27 +47,26 @@ public class RecetaService implements IRecetaService {
     public RecetaMedicaGetDTO update(Integer id, RecetaMedicaUptadeDTO put) {
         RecetaMedica receta = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Receta no encontrada"));
-        if (put.getMedicamentoIds() != null && !put.getMedicamentoIds().isEmpty()) {
-            if (put.getMedicamentoIds().size() > 15) {
+        if (put.medicamentoIds() != null && !put.medicamentoIds().isEmpty()) {
+            if (put.medicamentoIds().size() > 15) {
                 throw new IllegalArgumentException("Una receta no puede tener más de 15 medicamentos");
             }
 
 
         }
-        receta = mapper.update(receta, put);
+        mapper.update(receta, put);
         RecetaMedica saved = repo.save(receta);
         return mapper.toDTO(saved);
     }
 
     @Override
     public Optional<RecetaMedicaGetDTO> findById(Integer id) {
-        Optional<RecetaMedica> receta = repo.findById(id).filter(RecetaMedica::getActivo);
-        if (receta.isPresent()) {
-            RecetaMedicaGetDTO dto = mapper.toDTO(receta.get());
-            ClientesGetDTO nombre = obtenerNombre(dto.getId());
-            List<MedicamentosGetDTO> medicamentos = obtnerListaMedicamento(dto.getId());
-            dto.setClienteNombre(nombre.getNombre());
-            dto.setMedicamentosNombres(medicamentos);
+        Optional<RecetaMedica> recetaOp = repo.findById(id).filter(RecetaMedica::getActivo);
+        if (recetaOp.isPresent()) {
+            RecetaMedica receta = recetaOp.get();
+            ClientesGetDTO cliente = obtenerNombre(receta.getClienteId());
+            List<MedicamentosGetDTO> medicamentos = obtenerListaMedicamento(receta.getMedicamentoIds());
+            RecetaMedicaGetDTO dto = mapper.toDTOS(receta, cliente.nombre(), medicamentos);
             return Optional.of(dto);
         }
 
@@ -83,10 +81,12 @@ public class RecetaService implements IRecetaService {
 
     @CircuitBreaker(name = "catalog-service", fallbackMethod = "fallbackObtenerMedicamentos")
     @Retry(name = "catalog-service")
-    private List<MedicamentosGetDTO> obtnerListaMedicamento(Integer recetaId) {
-        return medicamento.obtenerMedicamentosPorReceta(recetaId).stream()
-                .filter(MedicamentosGetDTO::getRecetaRequerida)
-                .collect(Collectors.toList());
+    private List<MedicamentosGetDTO> obtenerListaMedicamento(List<Integer> medicamentoIds) {
+        if (medicamentoIds == null || medicamentoIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return medicamento.obtenerMedicamentosPorIds(medicamentoIds);
     }
 
     private Optional<ClientesGetDTO> fallbackObtenerClientes(Integer clienteId, Throwable throwable) {
@@ -111,24 +111,11 @@ public class RecetaService implements IRecetaService {
 
     @Override
     public List<RecetaMedicaGetDTO> findAll() {
-        List<RecetaMedica> recetas = repo.findAll();
-        List<RecetaMedicaGetDTO> dtos = new ArrayList<>();
-        for (RecetaMedica receta : recetas) {
-            RecetaMedicaGetDTO dto = mapper.toDTO(receta);
-            ClientesGetDTO nombre = obtenerNombre(dto.getId());
-            List<MedicamentosGetDTO> medicamentos = obtnerListaMedicamento(dto.getId());
-            dto.setClienteNombre(nombre.getNombre());
-            dto.setMedicamentosNombres(medicamentos);
-            dtos.add(dto);
-        }
-        return dtos;
+       return mapper.toDTOList(repo.findAll());
     }
 
     @Override
     public List<RecetaMedicaGetDTO> findByCliente(Integer id) {
-        List<RecetaMedica> recetas = repo.findByClienteIdAndActivoTrue(id);
-        return recetas.stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+        return mapper.toDTOList(repo.findByClienteIdAndActivoTrue(id));
     }
 }

@@ -3,14 +3,12 @@ package com.Farmacia.catalog_service.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
@@ -55,7 +53,7 @@ public class Medicamento implements Serializable {
     private Boolean recetaRequerida;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private Boolean activo;
 
     @NotNull(message = "El proveedor no puede estar vacío")
     private Integer proveedorId;

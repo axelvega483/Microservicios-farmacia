@@ -17,7 +17,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = repo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User no encontrado con email: " + email));
-        if (!user.isActivo()) {
+        if (!user.getActivo()) {
             throw new UsernameNotFoundException("User no activo con email: " + email);
         }
         return user;

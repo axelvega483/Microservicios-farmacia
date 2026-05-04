@@ -1,4 +1,4 @@
-package com.Farmacia.catalog_service.config.security;
+package com.Farmacia.sales_service.config.security.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
@@ -32,7 +32,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("=== CATALOG-SERVICE RECIBIÓ REQUEST ===");
+        System.out.println("=== Sales-SERVICE RECIBIÓ REQUEST ===");
         System.out.println("Método: " + request.getMethod());
         System.out.println("URI: " + request.getRequestURI());
 

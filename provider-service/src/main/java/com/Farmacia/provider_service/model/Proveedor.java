@@ -6,13 +6,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
@@ -45,6 +43,6 @@ public class Proveedor implements Serializable {
     private String email;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private Boolean activo;
 
 }

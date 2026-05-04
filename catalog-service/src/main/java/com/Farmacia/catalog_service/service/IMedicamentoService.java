@@ -28,11 +28,9 @@ public interface IMedicamentoService {
 
     List<MedicamentosGetDTO> proveedorId(Integer proveedorId);
 
-    List<MedicamentosGetDTO> recetaId(Integer recetaId);
-
-
     Optional<MedicamentosGetDTO> obtenerMedicamentosPorId(Integer medicamentoId);
 
+    List<MedicamentosGetDTO> findByIds(List<Integer> ids);
 
     void actualizarStock(Integer id,Integer cantidad);
 }

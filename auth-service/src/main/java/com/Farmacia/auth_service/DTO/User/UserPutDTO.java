@@ -10,9 +10,6 @@ public record UserPutDTO(
 
          String password,
 
-         boolean activo) {
-
-
-
+         Boolean activo) {
 
 }

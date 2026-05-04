@@ -1,5 +1,6 @@
 package com.Farmacia.catalog_service.config.security;
 
+import com.Farmacia.catalog_service.config.security.filter.JwtTokenValidator;
 import com.Farmacia.catalog_service.exception.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

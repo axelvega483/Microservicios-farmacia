@@ -5,35 +5,50 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Component
 public class ProveedorMapper {
 
+    public ProveedorGetDTO toDTOS(Proveedor proveedor, List<MedicamentosGetDTO> medicamentos) {
+        return new ProveedorGetDTO(
+                proveedor.getId(),
+                proveedor.getNombre(),
+                proveedor.getEmail(),
+                proveedor.getTelefono(),
+                proveedor.getActivo(),
+                medicamentos
+        );
+    }
+
     public ProveedorGetDTO toDTO(Proveedor proveedor) {
-        ProveedorGetDTO dto = new ProveedorGetDTO();
-        dto.setActivo(proveedor.getActivo());
-        dto.setEmail(proveedor.getEmail());
-        dto.setId(proveedor.getId());
-        dto.setNombre(proveedor.getNombre());
-        dto.setTelefono(proveedor.getTelefono());
-        return dto;
+        return new ProveedorGetDTO(
+                proveedor.getId(),
+                proveedor.getNombre(),
+                proveedor.getEmail(),
+                proveedor.getTelefono(),
+                proveedor.getActivo(),
+                Collections.emptyList()
+        );
     }
 
     public Proveedor create(ProveedorPostDTO post) {
-        Proveedor proveedor = new Proveedor();
-        proveedor.setNombre(post.getNombre());
-        proveedor.setEmail(post.getEmail());
-        proveedor.setTelefono(post.getTelefono());
-        proveedor.setActivo(Boolean.TRUE);
-        return proveedor;
+        return Proveedor.builder()
+                .nombre(post.nombre())
+                .email(post.email())
+                .telefono(post.telefono())
+                .activo(Boolean.TRUE)
+                .build();
     }
 
-    public Proveedor update(Proveedor proveedor, ProveedorUpdateDTO put) {
-        if (put.getNombre() != null) proveedor.setNombre(put.getNombre());
-        if (put.getEmail() != null) proveedor.setEmail(put.getEmail());
-        if (put.getTelefono() != null) proveedor.setTelefono(put.getTelefono());
-        if (put.getActivo() != null) proveedor.setActivo(put.getActivo());
-        return proveedor;
+    public void update(Proveedor proveedor, ProveedorUpdateDTO put) {
+        if (put.nombre() != null) proveedor.setNombre(put.nombre());
+        if (put.email() != null) proveedor.setEmail(put.email());
+        if (put.telefono() != null) proveedor.setTelefono(put.telefono());
+        if (put.activo() != null) proveedor.setActivo(put.activo());
+    }
+
+    public List<ProveedorGetDTO> toDTOList(List<Proveedor> proveedors) {
+        return proveedors.stream().filter(Proveedor::getActivo).map(this::toDTO).toList();
     }
 }

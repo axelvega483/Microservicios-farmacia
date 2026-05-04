@@ -1,17 +1,13 @@
 package com.Farmacia.customer_service.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
+public record ClienteUpdateDTO(
 
-@Getter
-@Setter
-public class ClienteUpdateDTO {
+        String nombre,
 
-    private String nombre;
+        String email,
 
-    private String email;
+        String dni,
 
-    private String dni;
+        Boolean activo) {
 
-    private Boolean activo;
 }

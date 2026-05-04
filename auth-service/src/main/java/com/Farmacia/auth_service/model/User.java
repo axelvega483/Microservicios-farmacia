@@ -56,7 +56,7 @@ public class User implements Serializable, UserDetails {
     private RolUser rol;
 
     @Column(nullable = false)
-    private boolean activo;
+    private Boolean activo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

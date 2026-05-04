@@ -40,7 +40,7 @@ public class UserService implements IUserServicie {
     @CircuitBreaker(name = "sales-service", fallbackMethod = "findByUserNoVenta")
     @Retry(name = "sales-service")
     public Optional<UserGetDTO> findById(Integer id) {
-        Optional<User> optUser = repo.findById(id).filter(User::isActivo);
+        Optional<User> optUser = repo.findById(id).filter(User::getActivo);
         if (optUser.isPresent()) {
             User user = optUser.get();
             List<UserVentaDTO> ventas = venta.obtenerVentasPorUser(user.getId());
@@ -52,7 +52,7 @@ public class UserService implements IUserServicie {
 
     public Optional<UserGetDTO> findByUserNoVenta(Integer id, Throwable throwable) {
         System.err.println("Fallback ejecutado para findByUserNoVenta(): " + throwable.getMessage());
-        Optional<User> optUser = repo.findById(id).filter(User::isActivo);
+        Optional<User> optUser = repo.findById(id).filter(User::getActivo);
         if (optUser.isPresent()) {
             UserGetDTO dto = mapper.toDTO(optUser.get());
             return Optional.of(dto);
@@ -151,7 +151,7 @@ public class UserService implements IUserServicie {
 
     @Override
     public UserGetDTO obtenerId(Integer userId) {
-        Optional<User> optUser = repo.findById(userId).filter(User::isActivo);
+        Optional<User> optUser = repo.findById(userId).filter(User::getActivo);
         return optUser.map(mapper::toDTO).orElse(null);
     }
 }

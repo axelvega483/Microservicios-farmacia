@@ -15,7 +15,7 @@ public class MapperDto {
                 user.getEmail(),
                 user.getDni(),
                 user.getRol(),
-                user.isActivo(),
+                user.getActivo(),
                 Collections.emptyList()
         );
 
@@ -28,7 +28,7 @@ public class MapperDto {
                 user.getEmail(),
                 user.getDni(),
                 user.getRol(),
-                user.isActivo(),
+                user.getActivo(),
                 ventas
         );
 
@@ -50,10 +50,11 @@ public class MapperDto {
         if (put.nombre() != null) user.setNombre(put.nombre());
         if (put.password() != null) user.setPassword(put.password());
         if (put.email() != null) user.setEmail(put.email());
+        if(put.activo() != null) user.setActivo(put.activo());
         return user;
     }
 
     public List<UserGetDTO> toDTOList(List<User> usuarios) {
-        return usuarios.stream().filter(User::isActivo).map(this::toDTO).toList();
+        return usuarios.stream().filter(User::getActivo).map(this::toDTO).toList();
     }
 }

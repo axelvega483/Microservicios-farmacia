@@ -7,7 +7,6 @@ import com.Farmacia.sales_service.repository.VentaRepository;
 import com.Farmacia.sales_service.util.EstadoVenta;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,17 +37,17 @@ public class VentaService implements IVentaService {
 
     @Override
     public VentaGetDTO create(VentaPostDTO post) {
-        ClientesGetDTO cliente = obtenerCliente(post.getClienteId());
-        UserGetDTO usuario = obtenerUsuario(post.getUserId());
+        ClientesGetDTO cliente = obtenerCliente(post.clienteId());
+        UserGetDTO usuario = obtenerUsuario(post.userId());
 
         List<DetalleVenta> detalles = new ArrayList<>();
 
-        for (VentaDetalleDTO detalleDTO : post.getDetalles()) {
-            MedicamentosGetDTO medicamento = obtenerMedicamento(detalleDTO.getMedicamentoId());
+        for (VentaDetalleDTO detalleDTO : post.detalles()) {
+            MedicamentosGetDTO medicamento = obtenerMedicamento(detalleDTO.medicamentoId());
 
-            validarMedicamento(medicamento, detalleDTO.getCantidad());
+            validarMedicamento(medicamento, detalleDTO.cantidad());
 
-            actualizarStock(medicamento.getId(), medicamento.getStock() - detalleDTO.getCantidad());
+            actualizarStock(medicamento.id(), medicamento.stock() - detalleDTO.cantidad());
 
             DetalleVenta detalle = mapper.toDetalleVenta(detalleDTO);
             detalles.add(detalle);
@@ -60,7 +59,7 @@ public class VentaService implements IVentaService {
         }
 
         Venta savedVenta = repo.save(venta);
-        return mapper.toDTO(savedVenta);
+        return mapper.toDTOS(savedVenta, cliente.nombre(), usuario.nombre());
     }
 
     @CircuitBreaker(name = "customer-service", fallbackMethod = "fallbackObtenerCliente")
@@ -105,19 +104,24 @@ public class VentaService implements IVentaService {
         throw new RuntimeException("Servicio de medicamentos no disponible" + throwable.getMessage());
     }
 
-    @CircuitBreaker(name = "medicamento-service")
+    @CircuitBreaker(name = "catalog-service", fallbackMethod = "fallbackActualizarStock")
+    @Retry(name = "catalog-service")
     private void actualizarStock(Integer medicamentoId, Integer nuevoStock) {
         medicamentoService.actualizarStock(medicamentoId, nuevoStock);
     }
 
+    private MedicamentosGetDTO fallbackActualizarStock(Throwable throwable) {
+        throw new RuntimeException("Servicio de medicamentos no disponible" + throwable.getMessage());
+    }
+
     private void validarMedicamento(MedicamentosGetDTO medicamento, Integer cantidadSolicitada) {
-        if (!medicamento.getActivo()) {
-            throw new RuntimeException("Medicamento inactivo: " + medicamento.getNombre());
+        if (!medicamento.activo()) {
+            throw new RuntimeException("Medicamento inactivo: " + medicamento.nombre());
         }
-        if (medicamento.getStock() < cantidadSolicitada) {
+        if (medicamento.stock() < cantidadSolicitada) {
             throw new RuntimeException(
                     String.format("Stock insuficiente para %s. Disponible: %d, Solicitado: %d",
-                            medicamento.getNombre(), medicamento.getStock(), cantidadSolicitada)
+                            medicamento.nombre(), medicamento.stock(), cantidadSolicitada)
             );
         }
     }
@@ -136,7 +140,7 @@ public class VentaService implements IVentaService {
         for (DetalleVenta d : venta.getDetalleventas()) {
             try {
                 MedicamentosGetDTO m = obtenerMedicamento(d.getMedicamentoId());
-                actualizarStock(m.getId(), m.getStock() + d.getCantidad());
+                actualizarStock(m.id(), m.stock() + d.getCantidad());
             } catch (Exception e) {
                 throw new RuntimeException("Error devolviendo stock para medicamento: " + d.getMedicamentoId(), e);
             }
@@ -156,11 +160,9 @@ public class VentaService implements IVentaService {
     public Optional<VentaGetDTO> findById(Integer id) {
         Optional<Venta> venta = repo.findById(id).filter(Venta::getActivo);
         if (venta.isPresent()) {
-            VentaGetDTO dto = mapper.toDTO(venta.get());
             ClientesGetDTO cliente = obtenerCliente(venta.get().getClienteId());
             UserGetDTO user = obtenerUsuario(venta.get().getUserId());
-            dto.setCliente(cliente.getNombre());
-            dto.setEmpleado(user.getNombre());
+            VentaGetDTO dto = mapper.toDTOS(venta.get(),cliente.nombre(), user.nombre());
             return Optional.of(dto);
         }
 
@@ -169,29 +171,20 @@ public class VentaService implements IVentaService {
 
     @Override
     public List<VentaGetDTO> findAll() {
-        List<Venta> ventas = repo.findAll();
-        List<VentaGetDTO> dtos = new ArrayList<>();
-        for (Venta venta : ventas) {
-            VentaGetDTO dto = mapper.toDTO(venta);
-            ClientesGetDTO cliente = obtenerCliente(venta.getClienteId());
-            UserGetDTO user = obtenerUsuario(venta.getUserId());
-            dto.setCliente(cliente.getNombre());
-            dto.setEmpleado(user.getNombre());
-            dtos.add(dto);
-        }
-        return dtos;
+        return mapper.toDTOList(repo.findAll());
     }
 
     @Override
     public List<VentaGetDTO> obtenerVentasPorUsuario(Integer userId) {
-        List<Venta> ventas =repo.findByUserIdAndActivoTrue(userId);
+        List<Venta> ventas = repo.findByUserIdAndActivoTrue(userId);
         return ventas.stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
     }
+
     @Override
     public List<VentaGetDTO> obtenerVentasPorCliente(Integer clienteId) {
-        List<Venta> ventas =repo.findByClienteIdAndActivoTrue(clienteId);
+        List<Venta> ventas = repo.findByClienteIdAndActivoTrue(clienteId);
         return ventas.stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());

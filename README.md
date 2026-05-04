@@ -5,16 +5,10 @@
 <p align="center">
   <b>Sistema backend distribuido para administración integral de una farmacia</b>
   <br>
-  <em>Desarrollado con Spring Boot • MySQL/PostgreSQL • OpenAPI 3</em>
+  <em>Desarrollado con Spring Boot • MySQL/PostgreSQL 3</em>
 </p>
 
 <p align="center">
-  <a href="http://localhost:8080/swagger-ui/index.html">
-    <img src="https://img.shields.io/badge/Documentación-SwaggerUI-brightgreen?style=for-the-badge&logo=swagger" alt="Swagger UI">
-  </a>
-  <a href="http://localhost:8080/v3/api-docs">
-    <img src="https://img.shields.io/badge/API-OpenAPI3-orange?style=for-the-badge&logo=openapi-initiative" alt="OpenAPI 3">
-  </a>
   <img src="https://img.shields.io/badge/Java-17-blue?style=for-the-badge&logo=openjdk" alt="Java 17">
   <img src="https://img.shields.io/badge/Spring_Boot-3.4.5-brightgreen?style=for-the-badge&logo=springboot" alt="Spring Boot">
 </p>
@@ -45,7 +39,7 @@
 
 | Servicio | Icono | Descripción | Endpoints |
 |----------|-------|-------------|-----------|
-| **auth-service** | 🔐 | Gestión de empleados y usuarios | `GET/POST/PUT/DELETE /auth` |
+| **auth-service** | 🔐 | Autenticación, registro y gestión de usuarios. **Dos controladores:** `AuthController` (login/registro) y `UserController` (CRUD/roles con `@PreAuthorize("hasRole('ADMIN') or @usuarioSecurity.isCurrentUser(#id)"`) | `POST /auth/login` • `POST /auth/register` • `GET/POST/PUT/DELETE /user` |
 | **customer-service** | 👥 | Gestión de clientes e historial | `GET/POST/PUT/DELETE /customer` |
 | **catalog-service** | 💊 | Inventario de medicamentos | `GET/POST/PUT/DELETE /catalog` |
 | **provider-service** | 🏢 | Gestión de proveedores | `GET/POST/PUT/DELETE /provider` |
@@ -71,6 +65,7 @@
 | **MySQL / PostgreSQL** | <img src="https://img.shields.io/badge/SQL-MySQL/PostgreSQL-4479A1?style=flat&logo=mysql" alt="SQL"> | Base de datos relacional |
 | **Lombok** | <img src="https://img.shields.io/badge/Lombok-Automático-FF9800?style=flat&logo=lombok" alt="Lombok"> | Reducción de boilerplate |
 | **Maven** | <img src="https://img.shields.io/badge/Maven-C71A36?style=flat&logo=apache-maven" alt="Maven"> | Gestión de dependencias |
+| **Spring Security + JWT** | 🔐 | Autenticación y autorización. Comunicación segura entre servicios mediante JWT |
 
 </div>
 
@@ -84,7 +79,7 @@
 |----------|-----------------|--------|
 | **💊 Medicamentos** | CRUD completo • Control de stock • Búsqueda por nombre | ✅ Implementado |
 | **👥 Clientes** | Gestión completa • Historial de compras y recetas | ✅ Implementado |
-| **🔐 Empleados** | Roles (ADMIN, EMPLEADO) • Login integrado | ✅ Implementado |
+| **🔐 Empleados** | Roles (ADMIN, EMPLEADO) • Login integrado • CRUD con seguridad `@PreAuthorize` | ✅ Implementado |
 | **🏢 Proveedores** | CRUD completo • Asociación con medicamentos | ✅ Implementado |
 | **💰 Ventas** | Registro con control de stock • Anulación • Facturación | ✅ Implementado |
 | **📝 Recetas Médicas** | Gestión completa • Asociación con clientes | ✅ Implementado |
@@ -112,7 +107,7 @@
 |-----------|----------------|--------|
 | **🛡️ Validaciones** | Mensajes claros y personalizados | ✅ Implementado |
 | **📐 Modularidad** | Separación por microservicio | ✅ Implementado |
-| **🔒 Seguridad** | Preparado para JWT y roles | ✅ Implementado |
+| **🔒 Seguridad** | Spring Security + JWT + roles | ✅ Implementado |
 | **📊 Performance** | Consultas optimizadas | ✅ Implementado |
 | **🧼 Código Limpio** | Principios SOLID y buenas prácticas | ✅ Implementado |
 

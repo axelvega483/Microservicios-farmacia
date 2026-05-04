@@ -3,45 +3,63 @@ package com.Farmacia.catalog_service.DTO;
 import com.Farmacia.catalog_service.model.Medicamento;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class MedicamentoMapper {
-
+    public MedicamentosGetDTO toDTOS(Medicamento medicamento, ProveedorGetDTO proveedor) {
+        return new MedicamentosGetDTO(
+                medicamento.getId(),
+                medicamento.getNombre(),
+                medicamento.getDescripcion(),
+                medicamento.getPrecio(),
+                medicamento.getStock(),
+                medicamento.getFechaVencimiento(),
+                medicamento.getRecetaRequerida(),
+                medicamento.getActivo(),
+                proveedor
+        );
+    }
 
     public MedicamentosGetDTO toDTO(Medicamento medicamento) {
-        MedicamentosGetDTO dto = new MedicamentosGetDTO();
-        dto.setActivo(medicamento.getActivo());
-        dto.setDescripcion(medicamento.getDescripcion());
-        dto.setFechaVencimiento(medicamento.getFechaVencimiento());
-        dto.setId(medicamento.getId());
-        dto.setNombre(medicamento.getNombre());
-        dto.setPrecio(medicamento.getPrecio());
-        dto.setRecetaRequerida(medicamento.getRecetaRequerida());
-        dto.setStock(medicamento.getStock());
-        return dto;
+        return new MedicamentosGetDTO(
+                medicamento.getId(),
+                medicamento.getNombre(),
+                medicamento.getDescripcion(),
+                medicamento.getPrecio(),
+                medicamento.getStock(),
+                medicamento.getFechaVencimiento(),
+                medicamento.getRecetaRequerida(),
+                medicamento.getActivo(),
+                null
+        );
     }
 
     public Medicamento create(MedicamentoPostDTO post) {
-        Medicamento medicamento = new Medicamento();
-        medicamento.setActivo(Boolean.TRUE);
-        medicamento.setDescripcion(post.getDescripcion());
-        medicamento.setFechaVencimiento(post.getFechaVencimiento());
-        medicamento.setNombre(post.getNombre());
-        medicamento.setPrecio(post.getPrecio());
-        medicamento.setProveedorId(post.getProveedor());
-        medicamento.setRecetaRequerida(post.getRecetaRequerida());
-        medicamento.setStock(post.getStock());
-        return medicamento;
+        return Medicamento.builder()
+                .nombre(post.nombre())
+                .descripcion(post.descripcion())
+                .precio(post.precio())
+                .stock(post.stock())
+                .fechaVencimiento(post.fechaVencimiento())
+                .recetaRequerida(post.recetaRequerida())
+                .proveedorId(post.proveedor())
+                .activo(Boolean.TRUE)
+                .build();
     }
 
-    public Medicamento update(Medicamento medicamento, MedicamentoUpdateDTO put) {
-        if (put.getActivo() != null) medicamento.setActivo(put.getActivo());
-        if (put.getDescripcion() != null) medicamento.setDescripcion(put.getDescripcion());
-        if (put.getFechaVencimiento() != null) medicamento.setFechaVencimiento(put.getFechaVencimiento());
-        if (put.getNombre() != null) medicamento.setNombre(put.getNombre());
-        if (put.getPrecio() != null) medicamento.setPrecio(put.getPrecio());
-        if (put.getProveedor() != null) medicamento.setProveedorId(put.getProveedor());
-        if (put.getRecetaRequerida() != null) medicamento.setRecetaRequerida(put.getRecetaRequerida());
-        if (put.getStock() != null) medicamento.setStock(put.getStock());
-        return medicamento;
+    public void update(Medicamento medicamento, MedicamentoUpdateDTO put) {
+        if (put.activo() != null) medicamento.setActivo(put.activo());
+        if (put.descripcion() != null) medicamento.setDescripcion(put.descripcion());
+        if (put.fechaVencimiento() != null) medicamento.setFechaVencimiento(put.fechaVencimiento());
+        if (put.nombre() != null) medicamento.setNombre(put.nombre());
+        if (put.precio() != null) medicamento.setPrecio(put.precio());
+        if (put.proveedor() != null) medicamento.setProveedorId(put.proveedor());
+        if (put.recetaRequerida() != null) medicamento.setRecetaRequerida(put.recetaRequerida());
+        if (put.stock() != null) medicamento.setStock(put.stock());
+    }
+
+    public List<MedicamentosGetDTO> toDTOList(List<Medicamento> medicamentos) {
+        return medicamentos.stream().filter(Medicamento::getActivo).map(this::toDTO).toList();
     }
 }

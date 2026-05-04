@@ -10,7 +10,7 @@ public record UserGetDTO(
          String email,
          String dni,
          RolUser rol,
-         boolean activo,
+         Boolean activo,
          List<UserVentaDTO> ventas) {
 
 

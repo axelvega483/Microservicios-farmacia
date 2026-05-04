@@ -24,11 +24,11 @@ public class SecurityConfig {
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/auth-service/auth/**").permitAll()
 
-                        .pathMatchers("/customer-service/**").authenticated()
-                        .pathMatchers("/catalog-service/**").authenticated()
-                        .pathMatchers("/sales-service/**").authenticated()
-                        .pathMatchers("/auth-service/user/**").authenticated()
-                        .pathMatchers("/payments-service/**").authenticated()
+                        .pathMatchers("/customer-service/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/catalog-service/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/sales-service/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/auth-service/user/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .pathMatchers("/provider-service/**").hasAnyRole("ADMIN", "EMPLEADO")
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore(jwtTokenValidator, SecurityWebFiltersOrder.AUTHENTICATION)

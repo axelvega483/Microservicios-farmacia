@@ -1,13 +1,8 @@
 package com.Farmacia.prescriptions_service.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
 
+public record ClientesGetDTO(
+        Integer id,
+        String nombre) {
 
-@Getter
-@Setter
-public class ClientesGetDTO {
-
-    private Integer id;
-    private String nombre;
 }

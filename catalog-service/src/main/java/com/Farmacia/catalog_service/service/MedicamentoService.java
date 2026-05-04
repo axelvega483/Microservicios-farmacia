@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MedicamentoService implements IMedicamentoService {
@@ -26,7 +27,7 @@ public class MedicamentoService implements IMedicamentoService {
 
     @Override
     public MedicamentosGetDTO create(MedicamentoPostDTO post) {
-        if (medicamentoExiste(post.getNombre(), post.getProveedor())) {
+        if (medicamentoExiste(post.nombre(), post.proveedor())) {
             throw new EntityExistsException("El medicamento ya existe");
         }
         Medicamento medicamento = mapper.create(post);
@@ -36,7 +37,7 @@ public class MedicamentoService implements IMedicamentoService {
 
     @Override
     public boolean medicamentoExiste(String nombre, Integer proveedorId) {
-        return repo.findByNombreAndProveedor(nombre, proveedorId).isPresent();
+        return Boolean.TRUE.equals(repo.existsByNombreAndProveedorIdAndActivoTrue(nombre, proveedorId));
     }
 
     @Override
@@ -55,9 +56,8 @@ public class MedicamentoService implements IMedicamentoService {
     public Optional<MedicamentosGetDTO> findById(Integer id) {
         Optional<Medicamento> medicamento = repo.findById(id).filter(Medicamento::getActivo);
         if (medicamento.isPresent()) {
-            MedicamentosGetDTO dto = mapper.toDTO(medicamento.get());
             ProveedorGetDTO prov = proveedor.obtenerProveedorBasico(medicamento.get().getProveedorId());
-            dto.setProveedor(prov);
+            MedicamentosGetDTO dto = mapper.toDTOS(medicamento.get(), prov);
             return Optional.of(dto);
         }
         return Optional.empty();
@@ -74,54 +74,28 @@ public class MedicamentoService implements IMedicamentoService {
     }
 
     @Override
-    @CircuitBreaker(name = "provider-service", fallbackMethod = "findByAllNoProveedor")
-    @Retry(name = "provider-service")
     public List<MedicamentosGetDTO> findAll() {
-        List<Medicamento> medicamentos = repo.findAll();
-        List<MedicamentosGetDTO> dtos = new ArrayList<>();
-        for (Medicamento medicamento : medicamentos) {
-            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
-            ProveedorGetDTO prov = proveedor.obtenerProveedorBasico(medicamento.getProveedorId());
-            dto.setProveedor(prov);
-            dtos.add(dto);
-        }
-        return dtos;
+        return mapper.toDTOList(repo.findAll());
     }
 
-    public List<MedicamentosGetDTO> findByAllNoProveedor(Throwable throwable) {
-        System.err.println("Fallback ejecutado para findAll(): " + throwable.getMessage());
-        List<Medicamento> medicamentos = repo.findAll();
-        List<MedicamentosGetDTO> dtos = new ArrayList<>();
-        for (Medicamento medicamento : medicamentos) {
-            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
-            dtos.add(dto);
-        }
-        return dtos;
-    }
 
     @Override
     public List<MedicamentosGetDTO> findByName(String nombre) {
-        List<Medicamento> medicamentos = repo.findByNombre(nombre);
-        List<MedicamentosGetDTO> dtos = new ArrayList<>();
-        for (Medicamento medicamento : medicamentos) {
-            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
-            dtos.add(dto);
-        }
-        return dtos;
+        return mapper.toDTOList(repo.findByNombreContainingIgnoreCaseAndActivoTrue(nombre));
     }
 
     @Override
     public MedicamentosGetDTO update(Integer id, MedicamentoUpdateDTO put) {
         Medicamento medicamento = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Medicamento no encontrado"));
-        medicamento = mapper.update(medicamento, put);
+        mapper.update(medicamento, put);
         Medicamento saved = repo.save(medicamento);
         return mapper.toDTO(saved);
     }
 
     @Override
     public List<MedicamentosGetDTO> proveedorId(Integer proveedorId) {
-        List<Medicamento> medicamentos = repo.findByProveedor(proveedorId);
+        List<Medicamento> medicamentos = repo.findByProveedorId(proveedorId);
         List<MedicamentosGetDTO> dtos = new ArrayList<>();
         for (Medicamento medicamento : medicamentos) {
             MedicamentosGetDTO dto = mapper.toDTO(medicamento);
@@ -131,14 +105,9 @@ public class MedicamentoService implements IMedicamentoService {
     }
 
     @Override
-    public List<MedicamentosGetDTO> recetaId(Integer recetaId) {
-        List<Medicamento> medicamentos = repo.findByProveedor(recetaId);
-        List<MedicamentosGetDTO> dtos = new ArrayList<>();
-        for (Medicamento medicamento : medicamentos) {
-            MedicamentosGetDTO dto = mapper.toDTO(medicamento);
-            dtos.add(dto);
-        }
-        return dtos;
+    public List<MedicamentosGetDTO> findByIds(List<Integer> ids) {
+        List<Medicamento> medicamentos = repo.findAllById(ids);
+        return mapper.toDTOList(medicamentos);
     }
 
     @Override

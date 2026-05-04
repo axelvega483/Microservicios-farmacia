@@ -5,15 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
@@ -39,7 +37,7 @@ public class RecetaMedica implements Serializable {
     private String medico;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private Boolean activo;
 
     @Column(name = "cliente_id", nullable = false)
     @NotNull(message = "Debe estar asociado a un cliente")

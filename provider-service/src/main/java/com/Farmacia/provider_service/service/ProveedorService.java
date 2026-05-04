@@ -1,9 +1,6 @@
 package com.Farmacia.provider_service.service;
 
-import com.Farmacia.provider_service.DTO.ProveedorGetDTO;
-import com.Farmacia.provider_service.DTO.ProveedorMapper;
-import com.Farmacia.provider_service.DTO.ProveedorPostDTO;
-import com.Farmacia.provider_service.DTO.ProveedorUpdateDTO;
+import com.Farmacia.provider_service.DTO.*;
 import com.Farmacia.provider_service.model.Proveedor;
 import com.Farmacia.provider_service.repository.ProveedorRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -12,7 +9,6 @@ import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +23,7 @@ public class ProveedorService implements IProveedorService {
 
     @Override
     public ProveedorGetDTO create(ProveedorPostDTO post) {
-        if (findByName(post.getNombre()).isPresent()) {
+        if (repo.existsByNombreIgnoreCase(post.nombre())) {
             throw new EntityExistsException("Proveedor existente");
         }
         Proveedor proveedor = mapper.create(post);
@@ -41,7 +37,7 @@ public class ProveedorService implements IProveedorService {
         if (proveedor == null) {
             throw new EntityExistsException("Proveedor no encontrado");
         }
-        proveedor = mapper.update(proveedor, put);
+        mapper.update(proveedor, put);
         Proveedor saved = repo.save(proveedor);
         return mapper.toDTO(saved);
     }
@@ -62,8 +58,8 @@ public class ProveedorService implements IProveedorService {
     public Optional<ProveedorGetDTO> findById(Integer id) {
         Optional<Proveedor> proveedor = repo.findById(id).filter(Proveedor::getActivo);
         if (proveedor.isPresent()) {
-            ProveedorGetDTO dto = mapper.toDTO(proveedor.get());
-            dto.setMedicamentos(medicamento.obtenerMedicamentosPorProveedor(dto.getId()));
+            List<MedicamentosGetDTO> medicamentosGetDTOs = medicamento.obtenerMedicamentosPorProveedor(id);
+            ProveedorGetDTO dto = mapper.toDTOS(proveedor.get(), medicamentosGetDTOs);
             return Optional.of(dto);
         }
         return Optional.empty();
@@ -80,38 +76,10 @@ public class ProveedorService implements IProveedorService {
     }
 
     @Override
-    @CircuitBreaker(name = "catalog-service", fallbackMethod = "findAllNoMedicamento")
-    @Retry(name = "catalog-service")
     public List<ProveedorGetDTO> findAll() {
-        List<Proveedor> proveedores = repo.findAll();
-        List<ProveedorGetDTO> dtos = new ArrayList<>();
-        for (Proveedor proveedor : proveedores) {
-            ProveedorGetDTO dto = mapper.toDTO(proveedor);
-            dto.setMedicamentos(medicamento.obtenerMedicamentosPorProveedor(dto.getId()));
-            dtos.add(dto);
-        }
-        return dtos;
+        return mapper.toDTOList(repo.findAll());
     }
 
-    public List<ProveedorGetDTO> findAllNoMedicamento(Throwable throwable) {
-        System.err.println("Fallback ejecutado para findAllNoMedicamento(): " + throwable.getMessage());
-        List<Proveedor> proveedores = repo.findAll();
-        List<ProveedorGetDTO> dtos = new ArrayList<>();
-        for (Proveedor proveedor : proveedores) {
-            ProveedorGetDTO dto = mapper.toDTO(proveedor);
-            dtos.add(dto);
-        }
-        return dtos;
-    }
-
-    public Optional<ProveedorGetDTO> findByName(String nombre) {
-        Optional<Proveedor> proveedor = repo.findByName(nombre).filter(Proveedor::getActivo);
-        if (proveedor.isPresent()) {
-            ProveedorGetDTO dto = mapper.toDTO(proveedor.get());
-            return Optional.of(dto);
-        }
-        return Optional.empty();
-    }
 
     @Override
     public Optional<ProveedorGetDTO> proveedorId(Integer id) {

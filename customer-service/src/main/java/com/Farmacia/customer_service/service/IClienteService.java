@@ -3,16 +3,12 @@ package com.Farmacia.customer_service.service;
 import com.Farmacia.customer_service.DTO.ClientePostDTO;
 import com.Farmacia.customer_service.DTO.ClienteUpdateDTO;
 import com.Farmacia.customer_service.DTO.ClientesGetDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IClienteService {
     ClientesGetDTO create(ClientePostDTO post);
-
-    boolean findDniActivo(String dni);
 
     ClientesGetDTO update(Integer id, ClienteUpdateDTO put);
 

@@ -53,7 +53,7 @@ public class UserController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}/rol")
-    public ResponseEntity<?> actualizarRolUsuario(@PathVariable Integer id, @RequestBody UserRolDTO usuarioDTO) {
+    public ResponseEntity<UserGetDTO> actualizarRolUsuario(@PathVariable Integer id, @RequestBody UserRolDTO usuarioDTO) {
         UserGetDTO dto = userService.actualizarRol(id, usuarioDTO);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

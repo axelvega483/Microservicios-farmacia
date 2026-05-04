@@ -1,4 +1,4 @@
-package com.Farmacia.catalog_service.config.security;
+package com.Farmacia.sales_service.config.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
