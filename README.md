@@ -88,16 +88,7 @@
 
 ---
 
-## 📄 Documentación Técnica
 
-<div align="center">
-
-| Recurso | Enlace | Descripción |
-|---------|--------|-------------|
-| **📖 Swagger UI** | [Swagger](http://localhost:8080/swagger-ui/index.html) | Documentación interactiva |
-</div>
-
----
 
 ## ⚙️ Requerimientos No Funcionales
 
